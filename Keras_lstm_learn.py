@@ -57,12 +57,17 @@ trainX = numpy.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
 testX = numpy.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
 
 model = Sequential()
-model.add(LSTM(4,input_shape=(1,look_back)))
+model.add(LSTM(4,input_shape=(1,look_back))) #features, lookback.
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
 #yes we do allow shuffling, because here all we are using is ONE
 #previous time step for prediction.LSTM is not really being used
 #yet, this is just an example
+
+#IMPORTANT: the input data is of the form [samplesxfeatures]. We could have more complex feature matrix like featuresXtime_steps
+#we set batch size =1, BECAUSE we dont want the data in other batches to affect the current pass.
+#we already have the timestep information in the input data in each sample.
+# if you want to sample batches, then you could set batch=look_back, and shuffle = False
 model.fit(trainX,trainY, epochs = 60, batch_size=1, verbose=2)
 
 # make predictions
