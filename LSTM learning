@@ -2,9 +2,28 @@
 
 
 
-
+IF return sequences is true, it becomes many to many lstm.
+See posts on stackoverflow and github.
 
 ==================================================
+STATEFUL LSTMs --- SEE CODE EXAMPLE
+Review research online that look back = 1 for stateful lstm ?
+==================================================
+
+There is saving weights, and saving state !! too
+
+---- code to get and set states--------------
+import keras.backend as K
+def get_states(model):
+    return [K.get_value(s) for s,_ in model.state_updates]
+def set_states(model, states):
+    for (d,_), s in zip(model.state_updates, states):
+        K.set_value(d, s)
+---------------------------------------------
+
+
+learned about save weights, and save state
+
 It requires that the training data not be shuffled when fitting the network.
  It also requires explicit resetting of the network state after each exposure to
  the training data (epoch) by calls to model.reset_states(). This
@@ -15,32 +34,38 @@ for i in range(100):
 	model.fit(trainX, trainY, epochs=1, batch_size=batch_size, verbose=2, shuffle=False)
 	model.reset_states()
 
-Finally, when the LSTM layer is constructed, the stateful parameter must be set True and instead of specifying the input dimensions, we must hard code the number of samples in a batch, number of time steps in a sample and number of features in a time step by setting the batch_input_shape parameter. For example:
 
-model.add(LSTM(4, batch_input_shape=(batch_size, time_steps, features), stateful=True))
+SEE CODE EXAMPLE
+
+Finally, when the LSTM layer is constructed, the stateful parameter must be set True and instead of specifying the input
+dimensions, we must hard code the number of samples in a batch, number of time steps in a sample and number of features
+in a time step by setting the batch_input_shape parameter. For example:
 
 model.add(LSTM(4, batch_input_shape=(batch_size, time_steps, features), stateful=True))
 This same batch size must then be used later when evaluating the model and making predictions. For example:
 
 model.predict(trainX, batch_size=batch_size)
-
-model.predict(trainX, batch_size=batch_size)
 ==================================================
+
+SEE CODE EXAMPLE
 
 2) Reshaping the data is ALSO different
 # reshape input to be [samples, time steps, features]
 trainX = numpy.reshape(trainX, (trainX.shape[0], trainX.shape[1], 1))
 testX = numpy.reshape(testX, (testX.shape[0], testX.shape[1], 1))
 
-This is as opposed to the features coming first
+This is as opposed to the features coming first. When you set stateful to be true, the lstm code reads input
+differently
 ==================================================
 
 3)AND most importantly, in the LSTM module
 we use batch input shape, as opposed to the input shape
-or using time distributed.
+or you have to use time distributed layers
 model.add(LSTM(4, batch_input_shape=(batch_size, look_back, num_features), stateful=True))
 ==============================================
 4) WHEN stacking LSTMS, need to return_sequences=True
+        ? MANY TO MANY lstms or many to one ? see examples online
+
 Stacked LSTMs with Memory Between Batches
 eg:
 model.add(LSTM(4, batch_input_shape=(batch_size, look_back, 1), stateful=True, return_sequences=True))
