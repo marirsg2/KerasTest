@@ -65,6 +65,6 @@ score = model.evaluate(X_test,Y_test,verbose = 0)
 
 #====================TEST MODEL============================
 
-print "end"
+print ("end")
 
 

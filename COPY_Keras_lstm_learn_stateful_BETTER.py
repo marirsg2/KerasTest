@@ -1,3 +1,4 @@
+
 # LSTM for international airline passengers problem with memory
 import numpy
 import matplotlib.pyplot as plt
@@ -42,7 +43,7 @@ train_size = int(len(dataset) * 0.67)
 test_size = len(dataset) - train_size
 train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]
 # reshape into X=t and Y=t+1
-look_back = 2 #yes lookback of 4 is weaker than 1, only in this case. BUT you need larger lookback to do BPTT
+look_back = 1 #yes lookback of 4 is weaker than 1, only in this case. BUT you need larger lookback to do BPTT
 #PAY ATTENTION to how the data set is created to allow this. And how the states are being preserved.
 trainX, trainY = create_dataset(train, look_back)
 testX, testY = create_dataset(test, look_back)
@@ -67,20 +68,14 @@ for i in range(100):
 	#todo DONT WORRY that it seems like we are only using 12 data points, we do look at the rest below !!
 	#todo REAL CONCERN/ I THINK THIS IS WRONG: unsure if this is the right approach. each data point is "lookBack" steps, but the next point
 	# is repeating many of the previous steps and is thus changing the state.
-	model.fit(trainX[:1], trainY[:1], epochs=1, batch_size=batch_size, verbose=2, shuffle=False)
-	# prev_state = get_model_states(model)
-	# print(prev_state)
-	# model.fit(trainX[1:2], trainY[1:2], epochs=1, batch_size=batch_size, verbose=2, shuffle=False)
-	# prev_state = get_model_states(model)
-	# print(prev_state)
-	#TODO READ THE SAVING STATE, AND RECOVERING STATE STEPS.
+	model.fit(trainX, trainY, epochs=1, batch_size=batch_size, verbose=2, shuffle=False)
+	#todo note that the state and the edge weights are tuned to each other. resetting one and not the other can result in nonsense.
 	#IT SEEMS as though you can safely predict , restore state and train.
 	prev_state = get_model_states(model)
 	testPredict = model.predict(testX, batch_size=batch_size)
-	testPredict = model.predict(testX, batch_size=batch_size)
 	set_model_states(model, prev_state)#recover state
+	testPredict = model.predict(testX, batch_size=batch_size)
 	#---end prediction step
-	model.fit(trainX[1:], trainY[1:], epochs=1, batch_size=batch_size, verbose=2,shuffle=False)
 	model.reset_states()
 # make predictions
 trainPredict = model.predict(trainX, batch_size=batch_size)

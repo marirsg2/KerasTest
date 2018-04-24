@@ -2,12 +2,17 @@
 
 
 
-IF return sequences is true, it becomes many to many lstm.
-See posts on stackoverflow and github.
+IMPORTANT: NEED TO SAVE BOTH states AND weights, TO RECOVER  complete lstm/memory based model.
+The weights are correlated to the mem states, so just recovering the state is useless. !!
+
+
+IMPORTANT: If you want to train and test in tandem.
+Maybe able to keep two networks, a testing and a training network !! and switch them for DQN.
+like the original DQN that had the training and target network.
+
 
 ==================================================
-STATEFUL LSTMs --- SEE CODE EXAMPLE
-Review research online that look back = 1 for stateful lstm ?
+
 ==================================================
 
 There is saving weights, and saving state !! too
