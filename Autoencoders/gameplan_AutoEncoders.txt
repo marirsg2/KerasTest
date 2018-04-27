@@ -4,3 +4,17 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 
 
 =====================================================================
+
+@Talk to Rao about your idea.
+
+
+1) And your Reward driven AE, and expected result (in VIZDOOM basic, the reconstruction is better
+when the monster and human are aligned !!)
+
+2) in VIZDOOM basic, the reconstruction is better
+when the monster and human are aligned !!)
+
+3) Completed survey paper
+
+4) Surveillance ( explicable exploration)  See your old hand notes. Say not really interested.
+Will continue looking for a related angle.
