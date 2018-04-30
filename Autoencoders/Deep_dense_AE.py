@@ -14,31 +14,39 @@ print (x_train.shape)
 print (x_test.shape)
 
 train_model = True
-model_weights_file = "dense_ae_wSparsity_weights.kmdl"
+model_weights_file = "Deep_dense_ae_weights.kmdl"
 
 encoding_dim = 32
 input_img = Input(shape=(784,))
-encoded = Dense(encoding_dim, activation = 'relu',\
-                activity_regularizer=regularizers.l1(0.0000005))(input_img)
-decoded = Dense (784,activation = 'sigmoid')(encoded) #sigmoid because zero or 1
+
+encoded = Dense(128, activation = 'relu',)(input_img)
+encoded = Dense(64, activation = 'relu',)(encoded)
+encoded = Dense(encoding_dim, activation = 'relu',)(encoded)
+decoded = Dense(64, activation = 'relu',)(encoded)
+decoded = Dense(128, activation = 'relu',)(decoded)
+decoded = Dense (784,activation = 'sigmoid')(decoded) #sigmoid because zero or 1
+# decoded = Dense (784,activation = 'relu')(decoded) #sigmoid because zero or 1
+# decoded = Dense (784,activation = 'linear')(decoded) #sigmoid because zero or 1
 
 #full AE model
 autoencoder = Model(input_img,decoded)
 autoencoder.compile(optimizer='adadelta', loss = 'binary_crossentropy')
+# autoencoder.compile(optimizer='adadelta', loss = 'mse')
 #encoder model
 encoder = Model (input_img,encoded)
 
 #decoder model
 encoded_input = Input(shape= (encoding_dim,))
-decoder_layer = autoencoder.layers[-1]
-#this is IMPORTANT LINE, notice how the model end is defined by the layer AND it's precursor (input)
-decoder = Model(encoded_input, decoder_layer(encoded_input))
+decoder_layer = (autoencoder.layers[-3])(encoded_input)
+decoder_layer = (autoencoder.layers[-2])(decoder_layer)
+decoder_layer = (autoencoder.layers[-1])(decoder_layer)
+decoder = Model(encoded_input, decoder_layer)
 
 
 if not train_model:
     autoencoder.load_weights(filepath=model_weights_file)
 else:
-    autoencoder.fit(x_train,x_train,epochs=70,batch_size=256,
+    autoencoder.fit(x_train,x_train,epochs=50,batch_size=256,
                     shuffle=True,validation_data=(x_test,x_test))
     autoencoder.save_weights(model_weights_file)
 
