@@ -7,6 +7,15 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 
 @Talk to Rao about your idea.
 
+?? can you quick test your idea using MNIST. all the data that is 9, make it all white.
+Step 2: make a few numbers (that share features) noisy !! degree of noise ~ degree of reward
+Step 3: When the reward is high, pay attention to the error. When the reward is low,
+encode less (less adjustment!!).
+IMPORTANT, YAS !! Step 4: What about encoding the negative or low reward to all zeros !! SO lower the reward
+MORE random zeros. Increase the probability of flipping a pixel to zero. apply TO VIZDOOM
+AT ZERO REWARD. 50% probability randomly.
+@ google attention detection in visual data! and maybe add in RL keyword.
+
 1) And your Reward driven AE, and expected result (in VIZDOOM basic, the reconstruction is better
 when the monster and human are aligned !!)
 
