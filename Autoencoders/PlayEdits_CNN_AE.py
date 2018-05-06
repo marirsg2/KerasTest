@@ -12,14 +12,14 @@ x_test = x_test.astype('float32')/255
 x_train = x_train.reshape((len(x_train),28,28,1))
 x_test = x_test.reshape((len(x_test),28,28,1))
 
-new_x_train = [x_train[i] for i in range(len(x_train)) if y_train[i] in [1,4,7]]
+new_x_train = [x_train[i] for i in range(len(x_train)) if y_train[i] in [1]]
 x_train = np.array(new_x_train)
 
 print (x_train.shape)
 print (x_test.shape)
 
-train_model = True
-model_weights_file = "PlayEdits_CNN_ae_weights.kmdl"
+train_model = False
+model_weights_file = "PlayEdits_CNN_ae_weights_1only.kmdl"
 
 # encoding_dim = 32
 input_img = Input(shape=(28,28,1))
@@ -71,13 +71,13 @@ n=10 #number of images to be displayed
 plt.figure(figsize=(20,4))
 for i in range(n):
     ax = plt.subplot(2,n,i+1)
-    plt.imshow(x_test[i].reshape(28,28))
+    plt.imshow(x_test[i+30].reshape(28,28))
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(True)#just for fun
     #display reconstruction
     ax = plt.subplot(2,n,i+1+n)
-    plt.imshow(decoded_imgs[i].reshape(28,28))
+    plt.imshow(decoded_imgs[i+30].reshape(28,28))
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
