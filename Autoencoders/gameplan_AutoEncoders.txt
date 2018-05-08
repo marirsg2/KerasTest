@@ -7,9 +7,11 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 
 @Talk to Rao about your idea.
 
-BATCH SIZE == 1 . Use SGD
+YAS ! so the TARGET x, when changed allows the encoding to be a filter !!
+NOW do a reward based noising. and see the effect.  0.5 I imagine is a threshold. TEST THIS !!
+ALSO output the cross entropy of the decoded values.
+HYPOTHESIS: Encoding 6, will help encode 8, even if the reward for 8 is low. (greater than 0.5)
 
-Try Random noise over black or white.
 
 ?? DEPENDING ON THE loss, function may need to change the proportion of POSITIVE or NEGATIVE samples.
 
