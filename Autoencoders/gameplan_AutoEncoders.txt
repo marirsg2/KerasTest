@@ -7,6 +7,18 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 
 @Talk to Rao about your idea.
 
+0) Tensorboard failed with your loss function. My guess is that it gives an array for the loss, as opposed to a single value !!
+Try changing the loss function to an type that returns a single value !!
+
+0.5)  TRY PUSHING all the other numbers to pure black !! That will achieve the "opposite effect". Pushing things to the
+background.
+
+1) First have the reward be 1, and see that it works as normal. THEN change the reward
+to 0.5, and see that it should still work, but like reducing the learning rate,
+1.5) THEN use +1/0 reward, which should work like optimizing only a subset of pictures
+1.7) Finally try +1/-1 reward which should be interesting.
+
+
 ?? can you quick test your idea using MNIST. all the data that is 9, make it all white.
 Step 2: make a few numbers (that share features) noisy !! degree of noise ~ degree of reward
 Step 3: When the reward is high, pay attention to the error. When the reward is low,

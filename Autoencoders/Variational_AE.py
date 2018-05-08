@@ -12,8 +12,8 @@ from keras import backend as K
 from keras import metrics
 from keras.datasets import mnist
 
-train_weights = False
-model_weights_file = "vae_weights.kmdl"
+train_weights = True
+model_weights_file = "vae_weights_2.kmdl"
 
 batch_size = 100
 original_dim = 784
