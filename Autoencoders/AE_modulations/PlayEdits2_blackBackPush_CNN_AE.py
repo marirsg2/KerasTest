@@ -5,8 +5,11 @@ from keras import regularizers
 import numpy as np
 from keras.callbacks import TensorBoard
 
+fraction_of_data = 0.25
 #prep the data
-(x_train,_) , (x_test,_) = mnist.load_data()
+(x_train,y_train) , (x_test,y_test) = mnist.load_data()
+x_train = x_train[0:int(len(x_train)*fraction_of_data)]
+y_train = y_train[0:int(len(y_train)*fraction_of_data)]
 x_train = x_train.astype('float32')/255
 x_test = x_test.astype('float32')/255
 x_train = x_train.reshape((len(x_train),28,28,1))
@@ -14,8 +17,19 @@ x_test = x_test.reshape((len(x_test),28,28,1))
 print (x_train.shape)
 print (x_test.shape)
 
-train_model = False
-model_weights_file = "CNN_ae_weights.kmdl"
+train_model = True
+model_weights_file = "CNN_ae_weights_backBlack.kmdl"
+
+acceptable_numbers = [6]
+def generate_background_or_keep(index):
+    if y_train[index] in acceptable_numbers:
+        return x_train[index]
+    else:
+        return np.zeros(28,28,1)
+        # return np.random.rand(28,28,1)
+
+new_x_train = [generate_background_or_keep(i) for i in range(x_train.shape[0])]
+x_train = np.array(new_x_train)
 
 # encoding_dim = 32
 input_img = Input(shape=(28,28,1))
@@ -51,7 +65,7 @@ encoder = Model (input_img,encoded)
 if not train_model:
     autoencoder.load_weights(filepath=model_weights_file)
 else:
-    autoencoder.fit(x_train,x_train,epochs=50,batch_size=256,
+    autoencoder.fit(x_train,x_train,epochs=3,batch_size=32,
                     shuffle=True,validation_data=(x_test,x_test),
                     callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
     autoencoder.save_weights(model_weights_file)
@@ -62,17 +76,18 @@ decoded_imgs = autoencoder.predict(x_test)
 
 import matplotlib.pyplot as plt
 
-n=10 #number of images to be displayed
+n=20 #number of images to be displayed
 plt.figure(figsize=(20,4))
 for i in range(n):
+    image_index = i*10
     ax = plt.subplot(2,n,i+1)
-    plt.imshow(x_test[i].reshape(28,28))
+    plt.imshow(x_test[image_index ].reshape(28,28))
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(True)#just for fun
     #display reconstruction
     ax = plt.subplot(2,n,i+1+n)
-    plt.imshow(decoded_imgs[i].reshape(28,28))
+    plt.imshow(decoded_imgs[image_index ].reshape(28,28))
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
