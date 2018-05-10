@@ -21,7 +21,7 @@ print (x_train.shape)
 print (x_test.shape)
 
 train_model = False
-model_weights_file = "CNN_ae_weights_ResampleOcclude_TrueToNoise_368.kmdl"
+model_weights_file = "CNN_ae_weights_ResampleOcclude_NoiseToNoise_148.kmdl"
 
 def keep_sample_by_reward(index, reward):
     #introduce noise into each pixel with probability determined noise_factor
