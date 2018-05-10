@@ -6,23 +6,28 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 =====================================================================
 
 @Talk to Rao about your idea.
+VIZDOOM is GREAT DEMO. Along with MNIST
 
-REVIEW: training with 8 and feeding other numbers causes you to see them as 8s !!
-AND THAT maybe good. The degree of reconstruction match is an estimate of the match.
+WAIT !! only get images with reward, not value. Value is policy dependent.
 
-TRY EXPERIMENT: BUT low reward images
-may get heightened if SAME features. Hence occlusion is necessary
-TEST if low reward images get heightened if features overlap. THIS MAYBE ACCEPTABLE.
 
-CHANGE:
-If occlusion is goal, then train to BLACK ( 0). What is benefit of noise ? Let the reward be how much of the
-image to KEEP.
+Review noise to True, and true to true.
+1) True to Noise 3,6,8 vs 148  - Seems to be bad in MNIST since a lot of features are shared across numbers. Test in Vizdoom
+2) Noise to Noise 3,6,8 vs 148 -- Seems to try and preserve features of even low reward numbers. Good. Pushes toward higher
+                                    reward features. GOOD !
 
-IMPORTANT: HERE the reward is NOT feature based , but category based. So training on 7, will not recover 1, because
-1 is penalized, so it learns to occlude if the horizontal bar "-" of 7 is missing.
-EXPERIMENT: If 1 is trained at 0.5, and then 1 is trained at 0.5 WITH 7 at 1. Does it improve !!
-ANSWER: No it get's worse ?? Why ? because those higher rewards are clearer and are higher value cuz easier to get right.
-Wherehas 1, has NOISE that it needs to predict as well. Maybe
+Change code :
+        To add options
+        1) Resampling T/F
+        2) Add_noise T/F
+        3) Modify Error T/F
+
+VIZ DOOM !!
+Generate images and value function. Normalize value.
+WAIT !! only get images with reward, not value. Value is policy dependent.
+
+
+Stacked Autoencoder ? with CNN style.. Hmmm... write for later
 
 
 EXPERIMENT
