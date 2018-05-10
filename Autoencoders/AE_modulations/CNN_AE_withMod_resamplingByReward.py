@@ -6,7 +6,7 @@ import numpy as np
 from keras.callbacks import TensorBoard
 import random as rand
 
-fraction_of_data = 0.5
+fraction_of_data = 1.0
 #prep the data
 (x_train,y_train) , (x_test,y_test) = mnist.load_data()
 x_train = x_train[0:int(len(x_train)*fraction_of_data)]
@@ -21,20 +21,20 @@ print (x_test.shape)
 train_model = True
 model_weights_file = "CNN_ae_weights_MODtarget.kmdl"
 
-acceptable_numbers = [6]
-def add_noise(index, noise_factor):
+
+def keep_sample_by_reward(index, reward):
     #introduce noise into each pixel with probability determined noise_factor
     #done by first generating noise value over an array of zeros, and then
     #AVERAGING the noise with the DATA.
-    noise_mask = np.random.rand(28, 28, 1)
-    noise_mask = np.less(noise_mask,noise_factor) #so if the noise factor was 0.4, then only those nodes where value
-                                                    #is less than 0.4 will be 1
-    noise_layer = np.random.rand(28, 28, 1) #THIS is the actual noise value. DIFFERENT from the one used to generate mask
-    # noise_layer = np.zeros(shape=(28, 28, 1)) #THIS is the actual noise value. DIFFERENT from the one used to generate mask
-    return x_train[index]*(1-noise_mask) + noise_layer*noise_mask
+    cutoff= np.random.rand()
+    if cutoff < reward:
+        return index
+    else:
+        return -1
+
 #=============================
 
-dict_num_reward = {0:0,     1:0.5,    2:0,    3:0,    4:1,    5:0,    6:0,    7:1,    8:0,  9:0}
+dict_num_reward = {0:0,     1:0,    2:0,    3:0,    4:0,    5:0,    6:0,    7:0,    8:1,  9:0}
 # negative_ratio = 0.2
 # negative_proportion = 1
 def mnist_reward(in_value):
@@ -50,8 +50,14 @@ def mnist_reward(in_value):
 
 
 # 1-mnist_reward = noise factor, and tells us how much noise to generate
-new_x_train = [add_noise(i, 1 - mnist_reward(y_train[i])) for i in range(x_train.shape[0])]
-target_x_train = np.array(new_x_train)
+new_x_train_indices = [keep_sample_by_reward(i, mnist_reward(y_train[i])) for i in range(x_train.shape[0])]
+new_x_train_indices  = set(new_x_train_indices)
+new_x_train_indices.remove(-1)
+new_x_train_indices = list(new_x_train_indices)
+new_x_train_indices = new_x_train_indices[:int(len(new_x_train_indices)/1000)*1000]
+target_x_train = x_train[new_x_train_indices]
+x_train = target_x_train
+y_train = y_train[new_x_train_indices]
 
 # encoding_dim = 32
 input_img = Input(shape=(28,28,1))
@@ -86,13 +92,13 @@ encoder = Model (input_img,encoded)
 if not train_model:
     autoencoder.load_weights(filepath=model_weights_file)
 else:
-    autoencoder.fit(x_train,target_x_train,epochs=25,batch_size=32,
+    autoencoder.fit(x_train,target_x_train,epochs=25,batch_size=25,
                     shuffle=True,validation_data=(x_test,x_test),
                     callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
     autoencoder.save_weights(model_weights_file)
 
-encoded_imgs = encoder.predict(x_train)
-decoded_imgs = autoencoder.predict(x_train)
+encoded_imgs = encoder.predict(x_test)
+decoded_imgs = autoencoder.predict(x_test)
 
 
 #find the indices of two of each class
@@ -103,7 +109,7 @@ curr_index = rand.randint(100,1000)
 for number in needed_numbers:
     while True:
         curr_index += 1
-        if y_train[curr_index] == number:
+        if y_test[curr_index] == number:
             target_indices.append(curr_index)
             break
     #end while
@@ -115,7 +121,7 @@ n=20 #number of images to be displayed
 plt.figure(figsize=(20,4))
 for i in range(n):
     ax = plt.subplot(2,n,i+1)
-    plt.imshow(x_train[target_indices[i]].reshape(28,28))
+    plt.imshow(x_test[target_indices[i]].reshape(28,28))
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(True)#just for fun

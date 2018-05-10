@@ -7,18 +7,46 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 
 @Talk to Rao about your idea.
 
-YAS ! so the TARGET x, when changed allows the encoding to be a filter !!
-NOW do a reward based noising. and see the effect.  0.5 I imagine is a threshold. TEST THIS !!
-ALSO output the cross entropy of the decoded values.
-HYPOTHESIS: Encoding 6, will help encode 8, even if the reward for 8 is low. (greater than 0.5)
+REVIEW: training with 8 and feeding other numbers causes you to see them as 8s !!
+AND THAT maybe good. The degree of reconstruction match is an estimate of the match.
+
+TRY EXPERIMENT: BUT low reward images
+may get heightened if SAME features. Hence occlusion is necessary
+TEST if low reward images get heightened if features overlap. THIS MAYBE ACCEPTABLE.
+
+CHANGE:
+If occlusion is goal, then train to BLACK ( 0). What is benefit of noise ? Let the reward be how much of the
+image to KEEP.
+
+IMPORTANT: HERE the reward is NOT feature based , but category based. So training on 7, will not recover 1, because
+1 is penalized, so it learns to occlude if the horizontal bar "-" of 7 is missing.
+EXPERIMENT: If 1 is trained at 0.5, and then 1 is trained at 0.5 WITH 7 at 1. Does it improve !!
+ANSWER: No it get's worse ?? Why ? because those higher rewards are clearer and are higher value cuz easier to get right.
+Wherehas 1, has NOISE that it needs to predict as well. Maybe
 
 
-?? DEPENDING ON THE loss, function may need to change the proportion of POSITIVE or NEGATIVE samples.
+EXPERIMENT
+CAN you feed a partly recovered image repeatedly , and see if the number is recovered from it ??
+EASIER experiment.
+Train on 4 and 7.
 
-TRY PUSHING all the other numbers to pure black !! That will achieve the "opposite effect". Pushing things to the
-background.
 
-Tensorboard failed with your loss function. My guess is that it gives an array for the loss, as opposed to a single value !!
+<write down for later>
+A large latent space would just give better separation. the CNN AE already has a large capacity.
+
+<COOL IDEA- worth trying write down for later>
+A Resnet based AE filter !! aha ! it does not Autoencode but Filter. IT IS NOT just an AE, THE AE part is to extract features
+rather than pixel level reproduction, but the latter is important too. The resnet approach just feeds the image at the other end, and
+we learn what to occlude ?? OR we could learn when NOT to occlude !! i.e. when you see a "7" feature, turn off occlusion.
+or occlude MORE when you see the wrong features.
+
+WAY OF THINKING: In essense, we are translating the users preferences into a latent space, and matching that with the current
+input. More the match, more the recover. Less the match, more the occlusion. principal components of preferences.
+Explicable. IN FACT, the recovery can be seen as the closest match to the PREFERENCE.
+
+
+
+Tensorboard failed with your loss function. My guess is your loss function gives an array for the loss, as opposed to a single value !!
 Try changing the loss function to an type that returns a single value !!
 
 
