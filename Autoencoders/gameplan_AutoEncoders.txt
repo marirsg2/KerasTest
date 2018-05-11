@@ -7,17 +7,10 @@ https://blog.keras.io/building-autoencoders-in-keras.html
 
 FIRST
 @Talk to Rao about your idea.
-RIGHT AFTER implementing code to enable disable the 3 options. Sampling, noising, reward error scaling.
-REWARD-error and SPARSITY may work well ??
 
-ACK that reward function is a GREAT heuristic approach. AE with reward is just a good way of explaining it.
-AHA ! all images of the successful traces get reward +1. Or proportional to the total accrued value, as compared with other traces.
-AE because it is feature based and explainable. Can also do value function from all images to +1/-1 . I think just the number
-is NOT enough information and may not converge. Wherehas if it is features that you are trying to fit to that signal (+1/-1)
-then you are more likely to find a convergent pattern.
-Feature reconstruction also forces you to find wholistic features rather than an apparent pattern of dots in the image.
-That "dot" better represent a whole set of features in many images :-) or else would need a whole set of dots (feature) to capture
-a feature.
+Add the reward error option.
+DO VIZ DOOM
+REWARD-error and SPARSITY may work well ??
 
 VIZDOOM is GREAT DEMO. Along with MNIST
 MNIST is not ideal due to high feature overlap across all cases, and how some 8s are written like 1s.
@@ -26,86 +19,13 @@ Even in basic vizdoom, the distinction is a little more clear. i.e. gun far away
 COLORIZATION FOR READABILITY. HUMAN Interpretable.
 Could use blue and red for colored reconstruction !! All low reward images go to blue. All high reward goes to RED
 
-IMPORTANT: Sparse autoencoder is used more for feature extraction (SEE TUTORIAL, compare performance)
-Adding sparsity forces common feature extraction. SPARSITY by activity regularizer.
-
-WAIT !! only get images with reward, not value. Value is policy dependent. If many policies, then could get the average
-value for a state across policies.
-
-Review noise to True, and true to true.
-1) True to Noise 3,6,8 vs 148  - Seems to be bad in MNIST since a lot of features are shared across numbers. Test in Vizdoom
-2) Noise to Noise 3,6,8 vs 148 -- Seems to try and preserve features of even low reward numbers. Good. Pushes toward higher
-                                    reward features. GOOD !
-
-Test with only occlusion, and all combinations below after code mod.
-Change code :
-        To add options
-        1) Resampling T/F
-        2) Add_noise T/F
-        3) Modify Error T/F ------- ?? what is the target (noise or true), and how is the error modified (+/- or only + but smaller)
-            a) When you have a reward, then you have double input
-            b) the reward is scaled between +1 and -1
-            c) We keep a running sum of the reward of images sampled so far.
-            d) The probability of sampling the next image is e^(-1*sum*reward)/e^(|sum|). YAS this is actually very good.
-                            i) so if sum and reward are same sign, it makes it much less likely
-                            ii) if |sum| is very high, eg 100, then need opposite sign of VERY high value (~1) to have a chance of being sampled
-                                the others , especially of opposite sign, are incredibly unlikely to be sampled .
-            e) Read through the input data in cycles and sample as such into another buffer. Feed the buffer into the AE.
-
-VIZ DOOM !!
-Generate images and value function. Normalize value.
-WAIT !! only get images with reward, not value. Value is policy dependent.
-
 
 Stacked Autoencoder ? with CNN style.. Hmmm... write for later
 
-
 EXPERIMENT
 CAN you feed a partly recovered image repeatedly , and see if the number is recovered from it ??
-EASIER experiment.
+EASIER experiment.  THIS IS KINDA EM. MAYBE makes sense wrt to preferences too.
 Train on 4 and 7.
 
 
-<write down for later>
-A large latent space would just give better separation. the CNN AE already has a large capacity.
 
-<COOL IDEA- worth trying write down for later>
-A Resnet based AE filter !! aha ! it does not Autoencode but Filter. IT IS NOT just an AE, THE AE part is to extract features
-rather than pixel level reproduction, but the latter is important too. The resnet approach just feeds the image at the other end, and
-we learn what to occlude ?? OR we could learn when NOT to occlude !! i.e. when you see a "7" feature, turn off occlusion.
-or occlude MORE when you see the wrong features.
-
-WAY OF THINKING: In essense, we are translating the users preferences into a latent space, and matching that with the current
-input. More the match, more the recover. Less the match, more the occlusion. principal components of preferences.
-Explicable. IN FACT, the recovery can be seen as the closest match to the PREFERENCE.
-
-
-
-Tensorboard failed with your loss function. My guess is your loss function gives an array for the loss, as opposed to a single value !!
-Try changing the loss function to an type that returns a single value !!
-
-
-
-1) First have the reward be 1, and see that it works as normal. THEN change the reward
-to 0.5, and see that it should still work, but like reducing the learning rate,
-1.5) THEN use +1/0 reward, which should work like optimizing only a subset of pictures
-1.7) Finally try +1/-1 reward which should be interesting.
-
-
-?? can you quick test your idea using MNIST. all the data that is 9, make it all white.
-Step 2: make a few numbers (that share features) noisy !! degree of noise ~ degree of reward
-Step 3: When the reward is high, pay attention to the error. When the reward is low,
-encode less (less adjustment!!).
-IMPORTANT, YAS !! Step 4: What about encoding the negative or low reward to all zeros !! SO lower the reward
-MORE random zeros. Increase the probability of flipping a pixel to zero. apply TO VIZDOOM
-AT ZERO REWARD. 50% probability randomly.
-@ google attention detection in visual data! and maybe add in RL keyword.
-
-1) And your Reward driven AE, and expected result (in VIZDOOM basic, the reconstruction is better
-when the monster and human are aligned !!)
-
-2) in VIZDOOM basic, the reconstruction is better
-when the monster and human are aligned !!)
-
-4) Surveillance ( explicable exploration)  See your old hand notes. Say not really interested.
-Will continue looking for a related angle.

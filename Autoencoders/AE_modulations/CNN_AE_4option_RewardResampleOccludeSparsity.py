@@ -23,16 +23,17 @@ Occlude = InputToOutputType != 1
 Sparsity  = False #TODO add a layer just to do sparse activations. a intermediate middle layer between the two pyramids of AE
 # dict_num_reward = {0:1,     1:1,    2:1,    3:1,    4:1,    5:1,    6:1,    7:1,    8:1,  9:1}
 # dict_num_reward = {0:0,     1:0,    2:0,    3:0,    4:0,    5:0,    6:0,    7:0,    8:0,  9:0}
-dict_num_reward = {0:0,     1:0,    2:0,    3:0.3,    4:0,    5:0,    6:0.3,    7:0,    8:1,  9:0}
+# dict_num_reward = {0:0,     1:0,    2:0,    3:0.3,    4:0,    5:0,    6:0.3,    7:0,    8:1,  9:0}
+dict_num_reward = {0:0,     1:0.3,    2:0,    3:0,    4:0.3,    5:0,    6:0,    7:0,    8:1,  9:0}
 
 
-model_file_name = "CNN_ae_weights_ResampleOcclude_NoiseToNoise_148.kmdl"
+model_weights_file_name = "CNN_ae_weights_ResampleOcclude_NoiseToNoise_148.kmdl"
 if train_model:
-    model_file_name = "weights_CNN_AE"
-    if RewardError: model_file_name += "_RE"
-    if Resample: model_file_name += "_R"
-    model_file_name += "_" + str(InputToOutputType)
-    model_file_name += "addendum" + ".kmdl"
+    model_weights_file_name = "weights_CNN_AE"
+    if RewardError: model_weights_file_name += "_RE"
+    if Resample: model_weights_file_name += "_R"
+    model_weights_file_name += "_" + str(InputToOutputType)
+    model_weights_file_name += "_13_43_81" + ".kmdl"
 
 
 
@@ -128,7 +129,7 @@ encoder = Model (input_img,encoded)
 #decoder model
 
 if not train_model:
-    autoencoder.load_weights(filepath=model_weights_file)
+    autoencoder.load_weights(filepath=model_weights_file_name)
 else:
     # InputToOutputType = 4  # 1-True to True  2-True to Noisy 3-Noisy to True  4-Noisy to Noisy
     # x_train_original, x_train_target
@@ -144,8 +145,8 @@ else:
                     shuffle=True,validation_data=(x_test,x_test),
                     callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
 
-    autoencoder.save_weights(model_weights_file)
-    print(model_weights_file)
+    autoencoder.save_weights(model_weights_file_name)
+    print(model_weights_file_name)
 
 encoded_imgs = encoder.predict(x_train_original)
 decoded_imgs = autoencoder.predict(x_train_original)
